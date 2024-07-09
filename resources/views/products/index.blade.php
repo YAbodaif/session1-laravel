@@ -18,8 +18,8 @@
                 <p class="card-text">{{$prod->descreption}}</p>
                 <h5 class="card-text text-primary">$ {{$prod->price}}</h5>
                 <a class="btn btn-primary" href="{{route('products_show',$prod->id)}}">Details</a>
-                <a class="btn btn-info" href="#">Edit</a>
-                <a class="btn btn-danger" href="#">Delete</a>
+                <a class="btn btn-info" href="{{route('products_edit',$prod->id)}}">Edit</a>
+                <a class="btn btn-danger" href="{{route('products_delconfirm',$prod->id)}}">Delete</a>
             </div>
         </div>  
     </div>

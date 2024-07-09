@@ -45,4 +45,34 @@ class ProductController extends Controller
         return  redirect (route('products_index'));
 
     }
+
+    public function delconfirm($id){
+        $prod=Product::findOrFail($id);
+        return view('products.delconfirm',compact('prod'));
+    }
+
+    public function delete($id){
+        Product::findOrFail($id)->delete();
+        return redirect(route('products_index'));
+
+    }
+
+    public function edit($id){
+        $prod=Product::findOrFail($id);
+        $cat=Product::select('category')->distinct()->get();
+        return view('products.edit',compact('prod','cat'));
+  
+    }
+
+    public function update(Request $request,$id){
+        Product::where('id','=',$id)->update([
+            'title'=>$request->title,
+            'description'=>$request->description,
+            'price'=>$request->price,
+            'category'=>$request->category,
+            'img'=>'1.jpg',
+            'seller_id'=>101,
+        ]);
+        return redirect(route('products_index'));
+    }
 }

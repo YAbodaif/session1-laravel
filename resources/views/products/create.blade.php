@@ -6,15 +6,7 @@
 
 @section('content')
 
-@if ($errors->any())
-    <div class="alert alert-danger" role="alert">
-        @foreach ($errors->all() as $error)
-            <p>{{$error}}</p>
-        @endforeach
-
-    </div>
-
-@endif
+@include ('inc.error')
 <form class="row g-3" method="post" action="{{route('products_store')}}">
     @csrf
   <div class="col-md-6">
