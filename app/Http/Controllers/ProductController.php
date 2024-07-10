@@ -31,16 +31,20 @@ class ProductController extends Controller
             'description'=>'required | string',
             'price'=>'required | numeric',
             'category'=>'required | string |max:100',
+            'img'=>'required | mimes:jpg,jpeg,png,gif,bmp | max:2048 | min:1',
         ]);
 
+        $ext=$request->file('img')->getClientOriginalExtension();
+        $imgName='prod' . uniqid() . ".$ext";
         Product::create([
             'title'=>$request->title,
             'description'=>$request->description,
             'price'=>$request->price,
             'category'=>$request->category,
-            'img'=>'1.jpg',
+            'img'=>$imgName,
             'seller_id'=>101,
         ]);
+        $request->file('img')->move(public_path('Uploads/products/'),$imgName);
 
         return  redirect (route('products_index'));
 
@@ -52,7 +56,10 @@ class ProductController extends Controller
     }
 
     public function delete($id){
-        Product::findOrFail($id)->delete();
+        $prod=Product::findOrFail($id);
+        $imgName=$prod->img;
+        $prod->delete();
+        unlink(public_path('Uploads/products/').$imgName);
         return redirect(route('products_index'));
 
     }
@@ -65,14 +72,36 @@ class ProductController extends Controller
     }
 
     public function update(Request $request,$id){
-        Product::where('id','=',$id)->update([
+        $request->validate([
+            'title'=>'required | string | max:100',
+            'description'=>'required | string',
+            'price'=>'required | numeric',
+            'category'=>'required | string |max:100',
+            'img'=>'nullable | mimes:jpg,jpeg,png,gif,bmp | max:2048 | min:1',
+        ]);
+        
+        $imgName="";
+        $data=Product::findOrFail($id);
+        if($request->hasFile('img')){
+            $ext=$request->file('img')->getClientOriginalExtension();
+            $imgName='prod' . uniqid() . ".$ext";
+            $request->file('img')->move(public_path('Uploads/products/'),$imgName);
+            unlink(public_path('Uploads/products/').$data->img);
+        }else{
+            $imgName=$data->img;
+        }
+            
+            $data->update([
             'title'=>$request->title,
             'description'=>$request->description,
             'price'=>$request->price,
             'category'=>$request->category,
-            'img'=>'1.jpg',
+            'img'=> $imgName,
             'seller_id'=>101,
         ]);
+       
+
+        
         return redirect(route('products_index'));
     }
 }
